@@ -1,0 +1,78 @@
+
+#############################################################################
+#
+# INCREASING CUBIC SPLINE WITH SMOOTHING PENALTY
+#
+#############################################################################
+
+problem LSQ;
+
+param no_of_pts;	# number of data points we have to fit
+param sub;		# no. of subdivisions of the [0,1] interval -- this will keep changing in the run file
+
+param datax {1..no_of_pts};
+
+
+param datay {1..no_of_pts};
+
+param deg := 3;
+set patches := {0..sub-1};			# assume uniformly subdivided [0,1] interval
+
+param cvset {1..no_of_pts};			# binary array: cvset[k]==1 means
+						# that point #k is selected in the crossvalidation set
+
+param oneperlambda;		# 1/smoothing parameter
+
+### COEFFICIENTS OF POLYNOMIALS
+var p{patches, 0..deg};
+
+### parameters to describe the polynomials, as in the Nesterov Theorem
+var alpha{patches} >= 0;
+var beta{patches};
+var gamma{patches} >= 0;
+var phi{patches} >= 0;
+
+
+### OBJECTIVE -- with second-order penalty
+minimize obj: sum{k in 1..no_of_pts : cvset[k] == 0}
+	(datay[k] -
+		sum{i in patches : (i <= sub*datax[k] < i+1)}
+		( p[i,0] + sum{j in 1..deg} p[i,j] * (sub * datax[k] - i)^j )
+	)^2 * oneperlambda/sub^3 + sum{i in patches} (sum{j in 2..deg, k in 2..deg} p[i,j]*p[i,k]*j*(j-1)*k*(k-1)/(j+k-3) );
+
+
+###################
+### INCREASING
+###################
+
+subject to i0{i in patches}:
+    p[i,1] == gamma[i];
+subject to i1{i in patches}:
+  2*p[i,2] == phi[i] + beta[i];
+subject to i2{i in patches}:
+  3*p[i,3] == -phi[i] + alpha[i];
+
+subject to isquares{i in patches}:
+  4*alpha[i]*gamma[i] >= beta[i]^2;
+
+
+######################
+# SPLINE CONSTRAINTS
+######################
+
+# continuity
+subject to cont{i in 0..sub-2}:
+  p[i+1,0] == sum{j in 0..deg} p[i,j];
+
+# continuous first derivative
+subject to d1{i in 0..sub-2}:
+  p[i+1,1] == sum{j in 1..deg} j * p[i,j];
+
+# continuous second derivative
+subject to d2{i in 0..sub-2}:
+  p[i+1,2] == p[i,2] + 3*p[i,3];
+
+###### END OF SPLINES
+
+
+# end of file.
