@@ -3,48 +3,48 @@
 Noise $\sigma$ & Method&$\frac 1n L_1$&$\frac{1}{\sqrt n}L_2$&$L_\infty$\tabularnewline
 \midrule
 \multirow{14}{*}{0.1}&Cubic Spline (CS)& 5.97e-02 (2.0e-03)\textsuperscript{7}& 7.50e-02 (2.4e-03)\textsuperscript{7}& 2.10e-01 (7.5e-03)\textsuperscript{6}\tabularnewline
-&MCS& 4.71e-02 (1.1e-03)\textsuperscript{6}& 5.97e-02 (1.4e-03)\textsuperscript{5}& 1.76e-01 (5.8e-03)\textsuperscript{2}\tabularnewline
+&Monotone CS (MCS)& 4.71e-02 (1.1e-03)\textsuperscript{6}& 5.97e-02 (1.4e-03)\textsuperscript{5}& 1.76e-01 (5.8e-03)\textsuperscript{2}\tabularnewline
 &Smoothing Spline (SS)& 4.57e-02 (6.7e-04)\textsuperscript{4}& 5.90e-02 (7.9e-04)\textsuperscript{4}& 2.06e-01 (6.3e-03)\textsuperscript{5}\tabularnewline
-&MSS& 4.41e-02 (6.2e-04)\textsuperscript{3}& 5.70e-02 (7.5e-04)\textsuperscript{3}& 2.02e-01 (6.5e-03)\textsuperscript{4}\tabularnewline
-&QS: Quadratic Spline& 7.56e-02 (3.5e-03)\textsuperscript{9}& 1.37e-01 (7.2e-03)\textsuperscript{9}& 6.94e-01 (4.4e-02)\textsuperscript{9}\tabularnewline
+&Montone SS (MSS)& 4.41e-02 (6.2e-04)\textsuperscript{3}& 5.70e-02 (7.5e-04)\textsuperscript{3}& 2.02e-01 (6.5e-03)\textsuperscript{4}\tabularnewline
+&Quadratic Spline (QS)& 7.56e-02 (3.5e-03)\textsuperscript{9}& 1.37e-01 (7.2e-03)\textsuperscript{9}& 6.94e-01 (4.4e-02)\textsuperscript{9}\tabularnewline
 &\textcite{heMonotoneBsplineSmoothing1998}: MQS& 4.64e-02 (9.7e-04)\textsuperscript{5}& 6.86e-02 (2.3e-03)\textsuperscript{6}& 3.31e-01 (2.4e-02)\textsuperscript{8}\tabularnewline
 &LOESS& 4.19e-01 (9.4e-03)\textsuperscript{12}& 8.88e-01 (1.7e-02)\textsuperscript{10}& 4.88e+00 (1.2e-01)\textsuperscript{10}\tabularnewline
 &Isotonic& 6.04e-02 (6.0e-04)\textsuperscript{8}& 7.69e-02 (7.7e-04)\textsuperscript{8}& 2.31e-01 (4.5e-03)\textsuperscript{7}\tabularnewline
 &\textcite{mammenEstimatingSmoothMonotone1991}: SI (LOESS+Isotonic)& 4.19e-01 (9.4e-03)\textsuperscript{13}& 8.88e-01 (1.7e-02)\textsuperscript{11}& 4.88e+00 (1.2e-01)\textsuperscript{11}\tabularnewline
 &\textcite{mammenEstimatingSmoothMonotone1991}: IS (Isotonic+LOESS)& 4.19e-01 (9.4e-03)\textsuperscript{11}& 8.88e-01 (1.7e-02)\textsuperscript{12}& 4.88e+00 (1.2e-01)\textsuperscript{12}\tabularnewline
+&\textcite{murrayFastFlexibleMethods2016a}: MonoPoly& 7.07e-01 (1.2e-02)\textsuperscript{14}& 1.03e+00 (2.0e-02)\textsuperscript{14}& 5.21e+00 (1.2e-01)\textsuperscript{13}\tabularnewline
 &\textcite{cannonMonmlpMultilayerPerceptron2017}: MONMLP& \textbf{2.68e-02} (6.3e-04)\textsuperscript{1}& \textbf{3.55e-02} (7.7e-04)\textsuperscript{1}& \textbf{1.32e-01} (5.0e-03)\textsuperscript{1}\tabularnewline
 &\textcite{navarro-garciaConstrainedSmoothingOutofrange2023}: cpsplines& 4.35e-02 (6.1e-04)\textsuperscript{2}& 5.60e-02 (7.3e-04)\textsuperscript{2}& 1.90e-01 (5.8e-03)\textsuperscript{3}\tabularnewline
-&\textcite{murrayFastFlexibleMethods2016a}: MonoPoly& 7.07e-01 (1.2e-02)\textsuperscript{14}& 1.03e+00 (2.0e-02)\textsuperscript{14}& 5.21e+00 (1.2e-01)\textsuperscript{13}\tabularnewline
 &\textcite{groeneboomConfidenceIntervalsMonotone2023}: SLSE& 2.98e-01 (8.6e-03)\textsuperscript{10}& 9.72e-01 (3.1e-02)\textsuperscript{13}& 6.21e+00 (1.9e-01)\textsuperscript{14}\tabularnewline
 \midrule
 \multirow{14}{*}{1.0}&Cubic Spline (CS)& 4.63e-01 (1.9e-02)\textsuperscript{9}& 5.83e-01 (2.4e-02)\textsuperscript{8}& 1.65e+00 (7.2e-02)\textsuperscript{7}\tabularnewline
-&MCS& 2.83e-01 (6.4e-03)\textsuperscript{4}& 3.66e-01 (8.4e-03)\textsuperscript{4}& 1.20e+00 (4.5e-02)\textsuperscript{2}\tabularnewline
+&Monotone CS (MCS)& 2.83e-01 (6.4e-03)\textsuperscript{4}& 3.66e-01 (8.4e-03)\textsuperscript{4}& 1.20e+00 (4.5e-02)\textsuperscript{2}\tabularnewline
 &Smoothing Spline (SS)& 2.86e-01 (5.5e-03)\textsuperscript{5}& 3.76e-01 (6.8e-03)\textsuperscript{5}& 1.34e+00 (5.1e-02)\textsuperscript{5}\tabularnewline
-&MSS& 2.55e-01 (4.4e-03)\textsuperscript{3}& 3.39e-01 (6.1e-03)\textsuperscript{3}& 1.31e+00 (5.3e-02)\textsuperscript{4}\tabularnewline
-&QS: Quadratic Spline& 4.91e-01 (1.6e-02)\textsuperscript{10}& 7.40e-01 (2.3e-02)\textsuperscript{9}& 3.64e+00 (1.3e-01)\textsuperscript{9}\tabularnewline
+&Montone SS (MSS)& 2.55e-01 (4.4e-03)\textsuperscript{3}& 3.39e-01 (6.1e-03)\textsuperscript{3}& 1.31e+00 (5.3e-02)\textsuperscript{4}\tabularnewline
+&Quadratic Spline (QS)& 4.91e-01 (1.6e-02)\textsuperscript{10}& 7.40e-01 (2.3e-02)\textsuperscript{9}& 3.64e+00 (1.3e-01)\textsuperscript{9}\tabularnewline
 &\textcite{heMonotoneBsplineSmoothing1998}: MQS& 2.95e-01 (7.1e-03)\textsuperscript{6}& 4.22e-01 (1.1e-02)\textsuperscript{6}& 1.84e+00 (1.0e-01)\textsuperscript{8}\tabularnewline
 &LOESS& 5.08e-01 (9.2e-03)\textsuperscript{12}& 9.37e-01 (1.5e-02)\textsuperscript{11}& 5.02e+00 (1.1e-01)\textsuperscript{11}\tabularnewline
 &Isotonic& 3.47e-01 (4.6e-03)\textsuperscript{7}& 4.61e-01 (6.2e-03)\textsuperscript{7}& 1.60e+00 (3.9e-02)\textsuperscript{6}\tabularnewline
 &\textcite{mammenEstimatingSmoothMonotone1991}: SI (LOESS+Isotonic)& 5.08e-01 (9.2e-03)\textsuperscript{11}& 9.37e-01 (1.5e-02)\textsuperscript{10}& 5.02e+00 (1.1e-01)\textsuperscript{12}\tabularnewline
 &\textcite{mammenEstimatingSmoothMonotone1991}: IS (Isotonic+LOESS)& 5.09e-01 (8.9e-03)\textsuperscript{13}& 9.39e-01 (1.5e-02)\textsuperscript{12}& 5.01e+00 (1.1e-01)\textsuperscript{10}\tabularnewline
+&\textcite{murrayFastFlexibleMethods2016a}: MonoPoly& 7.21e-01 (1.1e-02)\textsuperscript{14}& 1.06e+00 (1.8e-02)\textsuperscript{14}& 5.38e+00 (1.2e-01)\textsuperscript{13}\tabularnewline
 &\textcite{cannonMonmlpMultilayerPerceptron2017}: MONMLP& \textbf{2.32e-01} (7.6e-03)\textsuperscript{1}& \textbf{3.05e-01} (9.9e-03)\textsuperscript{1}& \textbf{1.01e+00} (4.4e-02)\textsuperscript{1}\tabularnewline
 &\textcite{navarro-garciaConstrainedSmoothingOutofrange2023}: cpsplines& 2.54e-01 (4.5e-03)\textsuperscript{2}& 3.38e-01 (6.2e-03)\textsuperscript{2}& 1.29e+00 (5.3e-02)\textsuperscript{3}\tabularnewline
-&\textcite{murrayFastFlexibleMethods2016a}: MonoPoly& 7.21e-01 (1.1e-02)\textsuperscript{14}& 1.06e+00 (1.8e-02)\textsuperscript{14}& 5.38e+00 (1.2e-01)\textsuperscript{13}\tabularnewline
 &\textcite{groeneboomConfidenceIntervalsMonotone2023}: SLSE& 4.56e-01 (1.0e-02)\textsuperscript{8}& 1.05e+00 (3.0e-02)\textsuperscript{13}& 6.40e+00 (1.8e-01)\textsuperscript{14}\tabularnewline
 \midrule
 \multirow{14}{*}{1.5}&Cubic Spline (CS)& 6.67e-01 (3.1e-02)\textsuperscript{12}& 8.41e-01 (3.8e-02)\textsuperscript{8}& 2.37e+00 (1.0e-01)\textsuperscript{8}\tabularnewline
-&MCS& 3.95e-01 (9.8e-03)\textsuperscript{4}& 5.18e-01 (1.3e-02)\textsuperscript{4}& 1.69e+00 (6.5e-02)\textsuperscript{2}\tabularnewline
+&Monotone CS (MCS)& 3.95e-01 (9.8e-03)\textsuperscript{4}& 5.18e-01 (1.3e-02)\textsuperscript{4}& 1.69e+00 (6.5e-02)\textsuperscript{2}\tabularnewline
 &Smoothing Spline (SS)& 3.99e-01 (8.9e-03)\textsuperscript{5}& 5.30e-01 (1.0e-02)\textsuperscript{5}& 1.92e+00 (7.5e-02)\textsuperscript{5}\tabularnewline
-&MSS& 3.61e-01 (8.0e-03)\textsuperscript{3}& 4.84e-01 (9.7e-03)\textsuperscript{3}& 1.84e+00 (7.8e-02)\textsuperscript{4}\tabularnewline
-&QS: Quadratic Spline& 6.95e-01 (2.0e-02)\textsuperscript{13}& 9.80e-01 (2.9e-02)\textsuperscript{12}& 4.42e+00 (1.7e-01)\textsuperscript{9}\tabularnewline
+&Montone SS (MSS)& 3.61e-01 (8.0e-03)\textsuperscript{3}& 4.84e-01 (9.7e-03)\textsuperscript{3}& 1.84e+00 (7.8e-02)\textsuperscript{4}\tabularnewline
+&Quadratic Spline (QS)& 6.95e-01 (2.0e-02)\textsuperscript{13}& 9.80e-01 (2.9e-02)\textsuperscript{12}& 4.42e+00 (1.7e-01)\textsuperscript{9}\tabularnewline
 &\textcite{heMonotoneBsplineSmoothing1998}: MQS& 4.09e-01 (1.2e-02)\textsuperscript{6}& 5.83e-01 (1.6e-02)\textsuperscript{6}& 2.37e+00 (1.4e-01)\textsuperscript{7}\tabularnewline
 &LOESS& 5.75e-01 (1.2e-02)\textsuperscript{10}& 9.69e-01 (1.8e-02)\textsuperscript{10}& 4.85e+00 (1.3e-01)\textsuperscript{11}\tabularnewline
 &Isotonic& 4.70e-01 (7.2e-03)\textsuperscript{7}& 6.33e-01 (9.5e-03)\textsuperscript{7}& 2.29e+00 (6.7e-02)\textsuperscript{6}\tabularnewline
 &\textcite{mammenEstimatingSmoothMonotone1991}: SI (LOESS+Isotonic)& 5.74e-01 (1.2e-02)\textsuperscript{9}& 9.68e-01 (1.8e-02)\textsuperscript{9}& 4.85e+00 (1.3e-01)\textsuperscript{12}\tabularnewline
 &\textcite{mammenEstimatingSmoothMonotone1991}: IS (Isotonic+LOESS)& 5.77e-01 (1.2e-02)\textsuperscript{11}& 9.74e-01 (1.8e-02)\textsuperscript{11}& 4.83e+00 (1.3e-01)\textsuperscript{10}\tabularnewline
+&\textcite{murrayFastFlexibleMethods2016a}: MonoPoly& 7.46e-01 (1.2e-02)\textsuperscript{14}& 1.10e+00 (1.9e-02)\textsuperscript{14}& 5.26e+00 (1.3e-01)\textsuperscript{13}\tabularnewline
 &\textcite{cannonMonmlpMultilayerPerceptron2017}: MONMLP& \textbf{3.43e-01} (1.0e-02)\textsuperscript{1}& \textbf{4.47e-01} (1.3e-02)\textsuperscript{1}& \textbf{1.41e+00} (6.1e-02)\textsuperscript{1}\tabularnewline
 &\textcite{navarro-garciaConstrainedSmoothingOutofrange2023}: cpsplines& 3.60e-01 (8.0e-03)\textsuperscript{2}& 4.81e-01 (9.8e-03)\textsuperscript{2}& 1.81e+00 (7.6e-02)\textsuperscript{3}\tabularnewline
-&\textcite{murrayFastFlexibleMethods2016a}: MonoPoly& 7.46e-01 (1.2e-02)\textsuperscript{14}& 1.10e+00 (1.9e-02)\textsuperscript{14}& 5.26e+00 (1.3e-01)\textsuperscript{13}\tabularnewline
 &\textcite{groeneboomConfidenceIntervalsMonotone2023}: SLSE& 5.19e-01 (1.3e-02)\textsuperscript{8}& 1.03e+00 (3.0e-02)\textsuperscript{13}& 6.03e+00 (2.0e-01)\textsuperscript{14}\tabularnewline
 \bottomrule
 \end{tabular}

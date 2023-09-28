@@ -16,9 +16,9 @@ _py_cps = pyimport("cpspline")
 
 fstep(x::Float64; xs::Vector{Float64}) = sum(x .> xs)
 
-function slse(x::AbstractVector{T}, y::AbstractVector{T}) where T <: AbstractFloat
+function slse(x::AbstractVector{T}, y::AbstractVector{T}, x0::AbstractVector{T}) where T <: AbstractFloat
     res = rcopy(R"slse($x, $y)")
-    return res[:, 1], res[:, 2]
+    return res[:, 2], res[:, 2]
 end
 
 function cpspline(x::AbstractVector{T}, y::AbstractVector{T}, x0::AbstractVector{T}) where T <: AbstractFloat
@@ -79,6 +79,18 @@ function MONMLP(x::AbstractVector{T}, y::AbstractVector{T}, x0::AbstractVector{T
     return [_MONMLP(x, y, x0, hidden1 = 2), _MONMLP(x, y, x0, hidden1 = 4), _MONMLP(x, y, x0, hidden1 = 32)]
 end
 
+function MCS(x::AbstractVector{T}, y::AbstractVector{T}, x0::AbstractVector{T}) where T <: AbstractFloat
+    Js = 4:50
+    cverr = [MonotoneSplines.cv_err(x, y, J  = j, nfold=2) for j in Js]
+    Jopt = Js[argmin(cverr)]
+    res = R"mono3spl($x, $y, newx = $x0, J = $Jopt)"
+    resb = R"bspline($x, $y, newx = $x0, degree = 3, J = $Jopt)"
+    return [(rcopy(R"$res$fitted"), rcopy(R"$res$pred")),
+            (rcopy(R"$res$fitted"), rcopy(R"$res$pred")), # keep to compatiable with MCB
+            (rcopy(R"$resb$fitted"), rcopy(R"$resb$pred")),
+            (rcopy(R"$resb$fitted"), rcopy(R"$resb$pred"))]
+end
+
 function MCB(x::AbstractVector{T}, y::AbstractVector{T}, x0::AbstractVector{T}) where T <: AbstractFloat
     res = R"mono3spl($x, $y, aic = TRUE)"
     J1 = rcopy(R"$res$j1")
@@ -102,13 +114,22 @@ end
 
 f_papp(x) = 5 + sum([erf(15i*(x-i/5)) for i = 1:4])
 
-function compare(;nrep = 2, n = 30, nknot = 10, σ = 0.1, curve = "step", fig = false, k = 10, kw...)
+function compare(;nrep = 2, n = 30, nknot = 10, σ = 0.1, curve = "step", fig = false, k = 1, kw...)
     #          MQB, QB, LOESS, ISO, mSI, mIS, MONMLP(3), MCB1, MCB2, CB1, CB2, MSS, SS
-    methods = [MQB,     LOESS, ISO, mSI, mIS, MONMLP,           MCB,            MSS, cpspline, monpol]
-    name_methods = ["MQB", "QB", "LOESS", "Isotonic", "SI", "IS", "MONMLP (2x2)", "MONMLP (4x2)", "MONMLP (32x2)", "MCS1", "MCS2", "CS1", "CS2", "MSS", "SS", "cpsplines", "MonoPoly"]
-    cols = [:blue, :blue, :orange, :purple, :purple, :purple, :green, :green, :green, :red, :red, :red, :red, :cyan, :cyan]
-    lty = [:solid, :dash, :solid, :solid, :dash, :dot, :solid, :solid, :solid, :solid, :dot, :dash, :dashdot, :solid, :dash]
-    submethods = [2, 1, 1, 1, 1, 3, 4, 2, 1, 1]
+    methods = [MQB,     LOESS, ISO, mSI, mIS, MONMLP,           MCS,            MSS, cpspline, monpol, slse]
+    name_methods = ["MQS", "QS", "LOESS", "Isotonic", "SI", 
+                    "IS", "MONMLP (2x2)", "MONMLP", "MONMLP (32x2)", "MCS1", 
+                    "MCS", "CS1", "CS", "MSS", "SS", 
+                    "cpsplines", "MonoPoly", "SLSE"]
+    cols = [:blue, :blue, :orange, :purple, :purple, 
+            :purple, :green, :green, :green, :red, 
+            :red, :red, :red, :cyan, :cyan,
+            :magenta, :gray]
+    lty = [:solid, :dash, :solid, :solid, :dash, 
+            :dot, :solid, :solid, :solid, :dot, 
+            :solid, :dashdot, :dash, :solid, :dash,
+            :solid, :solid]
+    submethods = [2, 1, 1, 1, 1, 3, 4, 2, 1, 1, 1]
     nmethod = sum(submethods)
     err = zeros(nrep, ifelse(k==1, 3, 2), nmethod) #　fitting & prediction
     if nrep > 1
@@ -136,7 +157,7 @@ function compare(;nrep = 2, n = 30, nknot = 10, σ = 0.1, curve = "step", fig = 
         end
         imethod = 0
         for f in methods
-            res = f(x, y, x0)
+            res = f(x, y, x0) # SLSE need to be scaled to [0, 1]
             if isa(res, Tuple)
                 ni = 1
             else
@@ -150,7 +171,7 @@ function compare(;nrep = 2, n = 30, nknot = 10, σ = 0.1, curve = "step", fig = 
                     yhat, y0hat = res[j]
                 end
                 if fig
-                    if name_methods[imethod] in ["MONMLP (2x2)", "MONMLP (32x2)", "MCS2", "CS2"]
+                    if name_methods[imethod] in ["MONMLP (2x2)", "MONMLP (32x2)", "MCS1", "CS1"]
                         continue
                     end
                     lw = ifelse(lty[imethod] == :solid, 0.8, 1.2)
@@ -214,7 +235,7 @@ function single_experiment_slse(; nknot = 10, n = 100, k = 1, curve = "step", σ
         x, y, x0, y0 = MonotoneSplines.gen_data(n, σ, f_cubic, k = k)
         x = (x .+ 1.0) ./ 2
     end
-    xgrid, ypred = slse(x, y)
+    ypred, ypred = slse(x, y, x0)
     ygrid = y0 # modified the original code to output the fit at each x; otherwise, 
     ### use the following code, but the comparison would unfair
     # if curve == "step"
@@ -233,18 +254,8 @@ function single_experiment_slse(; nknot = 10, n = 100, k = 1, curve = "step", σ
 end
 
 function experiments(nrep = 100)
-    #timestamp = replace(strip(read(`date -Iseconds`, String)), ":" => "_")
-    timestamp = "2023-09-25T17_54_13-04_00"
-    # for σ in [0.1, 1.0, 1.5]
-    for σ in [1.0]
-        #for curve in ["step", "logit", "growth", "poly3"]
-        for curve in ["poly3"]
-            @info "σ = $σ, curve = $curve"
-            serialize("../output/sim/$(curve)_$(σ)_$(timestamp)_nrep$nrep.sil", compare(nrep = nrep, curve = curve, σ = σ, k = 1, n = 100))
-        end
-    end
-    # for σ in [0.1, 1.0, 1.5]
-    for σ in [1.5]
+    timestamp = replace(strip(read(`date -Iseconds`, String)), ":" => "_")
+    for σ in [0.1, 1.0, 1.5]
         for curve in ["step", "logit", "growth", "poly3"]
             @info "σ = $σ, curve = $curve"
             serialize("../output/sim/$(curve)_$(σ)_$(timestamp)_nrep$nrep.sil", compare(nrep = nrep, curve = curve, σ = σ, k = 1, n = 100))
@@ -257,31 +268,34 @@ function experiments(nrep = 100)
     end
 end
 
-function write2tables(; include_slse = false)
+function write2tables(; include_slse = false, one_se_rule = true)
     # timestamp = "2022-07-04T11_07_25+08_00"
     # nrep = 100
     #timestamp = "2022-07-04T12_19_32+08_00"
     #nrep = 1000
     # timestamp = "2023-01-17T17_20_41-05_00"
-    timestamp = "2023-09-25T17_54_13-04_00"
+    # timestamp = "2023-09-25T17_54_13-04_00"
+    timestamp = "2023-09-27T13_14_34-04_00"
     nrep = 100
     resfolder = "../output/sim/"
     all_method_lbl = ["MQB", "QB", "LOESS", "Isotonic", "SI", 
                       "IS", "MONMLP (2x2)", "MONMLP (4x2)", "MONMLP (32x2)", "MCS1", 
                       "MCS2", "CS1", "CS2", "MSS", "SS", 
-                      "cpsplines", "MonoPoly"]
+                      "cpsplines", "MonoPoly", "SLSE"]
     #sel_idx = [12, 10, 15, 14, 2, 1, 3, 4, 5, 6, 9, 16, 17]
     
     if include_slse
-        sel_idx = [13, 11, 15, 14, 2, 1, 3, 4, 5, 6, 9, 16, 17, 18]
+        # sel_idx = [12, 10, 15, 14, 2, 1, 3, 4, 5, 6, 17, 9, 16, 18]
+        sel_idx = [13, 11, 15, 14, 2, 1, 3, 4, 5, 6, 17, 9, 16, 19] # 18->19, discard the SI from experiments (due to unscaled)
         res_slse = deserialize(joinpath(resfolder, "slse_2023-09-26T21_27_06-04_00_nrep100.sil"))
     else
-        sel_idx = [13, 11, 15, 14, 2, 1, 3, 4, 5, 6, 9, 16, 17]
+        sel_idx = [13, 11, 15, 14, 2, 1, 3, 4, 5, 6, 17, 9, 16, 18]
     end
-    all_method_lbl_full = ["\\textcite{heMonotoneBsplineSmoothing1998}: MQS", "QS: Quadratic Spline", "LOESS", "Isotonic", "\\textcite{mammenEstimatingSmoothMonotone1991}: SI (LOESS+Isotonic)", 
-                    "\\textcite{mammenEstimatingSmoothMonotone1991}: IS (Isotonic+LOESS)", "MONMLP (2x2)", "MONMLP (4x2)", "\\textcite{cannonMonmlpMultilayerPerceptron2017}: MONMLP", "MCS", 
-                    "MCS", "Cubic Spline", "Cubic Spline (CS)", "MSS", "Smoothing Spline (SS)", 
+    all_method_lbl_full = ["\\textcite{heMonotoneBsplineSmoothing1998}: MQS", "Quadratic Spline (QS)", "LOESS", "Isotonic", "\\textcite{mammenEstimatingSmoothMonotone1991}: SI (LOESS+Isotonic)", 
+                    "\\textcite{mammenEstimatingSmoothMonotone1991}: IS (Isotonic+LOESS)", "MONMLP (2x2)", "MONMLP (4x2)", "\\textcite{cannonMonmlpMultilayerPerceptron2017}: MONMLP", "Monotone CS (MCS)", 
+                    "Monotone CS (MCS)", "Cubic Spline (CS)", "Cubic Spline (CS)", "Montone SS (MSS)", "Smoothing Spline (SS)", 
                     "\\textcite{navarro-garciaConstrainedSmoothingOutofrange2023}: cpsplines", "\\textcite{murrayFastFlexibleMethods2016a}: MonoPoly",
+                    "\\textcite{groeneboomConfidenceIntervalsMonotone2023}: SLSE",
                     "\\textcite{groeneboomConfidenceIntervalsMonotone2023}: SLSE"]
     cubic = Array{Any, 1}(undef, 3)
     logit = Array{Any, 1}(undef, 3)
@@ -318,7 +332,13 @@ function write2tables(; include_slse = false)
     rks = [zeros(Int, n, m) for i=1:2]
     for i = 1:2
         for j = 1:3
-            isbf[i][argmin(μerr[i][:, j]), j] = 1
+            idx = argmin(μerr[i][:, j])
+            if one_se_rule
+                cutoff = μerr[i][idx, j] + σerr[i][idx, j]
+                isbf[i][μerr[i][:, j] .< cutoff, j] .= 1
+            else
+                isbf[i][idx, j] .= 1
+            end
             rks[i][:, j] .= sortperm(sortperm(μerr[i][:, j]))
         end
     end
@@ -352,7 +372,13 @@ function write2tables(; include_slse = false)
         rks = [zeros(Int, n, m) for i = 1:3]
         for i = 1:3
             for j = 1:3
-                isbf[i][argmin(μerr[i][:, j]), j] = 1
+                idx = argmin(μerr[i][:, j])
+                if one_se_rule
+                    cutoff = μerr[i][idx, j] + σerr[i][idx, j]
+                    isbf[i][μerr[i][:, j] .< cutoff, j] .= 1
+                else
+                    isbf[i][idx, j] .= 1
+                end
                 rks[i][:, j] = sortperm(sortperm(μerr[i][:, j]))
             end
         end
@@ -390,14 +416,15 @@ end
 
 function demo_plots()
 #    timestamp = replace(strip(read(`date -Iseconds`, String)), ":" => "_")
-    timestamp = "2023-01-17T17_14_25-05_00"
+    #timestamp = "2023-01-17T17_14_25-05_00"
+    timestamp = "2023-09-25T17_54_13-04_00"
     seed = 5
     Random.seed!(seed)
-    compare(;nrep=1,fig=true,curve="logit", σ = 0.3, n=50, title = latexstring("Logistic Curve (\$\\sigma = 0.3\$)"))
-    savefig("../res/mono_fit/demo_logit_seed$seed-$timestamp.pdf")
+    compare(;nrep=1,fig=true,curve="logit", σ = 0.3, n=100, title = latexstring("Logistic Curve (\$\\sigma = 0.3\$)"))
+    savefig("../output/sim/demo_logit_seed$seed-$timestamp.pdf")
     Random.seed!(seed)
-    compare(nrep=1,fig=true,curve="growth", σ = 1.5, n=50, title = latexstring("Growth Curve (\$\\sigma = 1.5\$)") )
-    savefig("../res/mono_fit/demo_growth_seed$seed-$timestamp.pdf")
+    compare(nrep=1,fig=true,curve="erf", σ = 0.3, n=100, title = latexstring("Error Function Curve (\$\\sigma = 0.3\$)") )
+    savefig("../output/sim/demo_erf_seed$seed-$timestamp.pdf")
 end
 
 function compare_papp()

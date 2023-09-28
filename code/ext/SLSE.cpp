@@ -135,9 +135,26 @@ List SLSE(NumericMatrix X, int N)
         out2(i,1)=data[i+1][1];
     }
     
+    // edit by weiya @2023-09-26 22:34:34 
+    // see also: https://github.com/pietg/monotone-regression/blob/main/Monotone_regression_SLSE/CI_SLSE.cpp
+    double *SLSE_data, *data0;
+    data0 = new double[n+1];
+    SLSE_data = new double[n+1];
+    for (i=1;i<=n;i++)
+        data0[i]=data[i][0];
+    regression_estimate(m,tt,n,data0,h,pp,ff,SLSE_data);
+    NumericMatrix out3 = NumericMatrix(n,2);
+    
+    for (i=0;i<n;i++)
+    {
+        out3(i,0)=data[i+1][0];
+        out3(i,1)=SLSE_data[i+1];
+    }
+
+    
     // make the list for the output, containing the MLE, hazard, the bootstrap confidence intervals and -log likelihood
     
-    List out = List::create(Rcpp::Named("SLSE")=out1,Rcpp::Named("data")=out2);
+    List out = List::create(Rcpp::Named("SLSE")=out1,Rcpp::Named("data")=out2, Rcpp::Named("fitted")=out3);
     // free memory
     
     for (i=0;i<n+1;i++)
@@ -148,7 +165,9 @@ List SLSE(NumericMatrix X, int N)
     
     delete[] tt; delete[] pp;
     delete[] SLSE;;
-    
+
+    delete[] SLSE_data;
+        
     return out;
 }
 
