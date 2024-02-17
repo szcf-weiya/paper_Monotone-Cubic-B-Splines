@@ -11,7 +11,7 @@ import importlib
 importlib.reload(mlp)
 """
 
-function classic_mlp(; N = 100, nepoch = 10000, gpu_id = -1, ngrid = 100, nhidden = 100)
+function classic_mlp(; N = 100, nepoch = 10000, gpu_id = -1, ngrid = 100, nhidden = 100, eta = 1e-4)
     #N = 100
     # https://github.com/szcf-weiya/MonotoneSplines.jl/blob/2b5310d6d8583f9c898fb9c9e5583eb842493f13/src/boot.jl#L105
     seed = 1
@@ -42,7 +42,7 @@ function classic_mlp(; N = 100, nepoch = 10000, gpu_id = -1, ngrid = 100, nhidde
     βs_grid_mat = vcat(grid_βs'...)'
     λs_grid_mat = vcat(MonotoneSplines.aug.(grid_λs)'...)'
 
-    tloss, vloss = py"mlp.train_MLP"(Float32.(λs_mat'), Float32.(βs_mat'), Float32.(λs_grid_mat'), Float32.(βs_grid_mat'), gpu_id, nepoch = nepoch, nhidden = nhidden)
+    tloss, vloss = py"mlp.train_MLP"(Float32.(λs_mat'), Float32.(βs_mat'), Float32.(λs_grid_mat'), Float32.(βs_grid_mat'), gpu_id, nepoch = nepoch, nhidden = nhidden, eta = eta)
 
-    writedlm("loss-N$N-nepoch$nepoch-ngrid$ngrid-nhidden$nhidden.txt", hcat(tloss, vloss))
+    writedlm("loss-N$N-nepoch$nepoch-ngrid$ngrid-nhidden$nhidden-eta$eta.txt", hcat(tloss, vloss))
 end
