@@ -16,7 +16,8 @@ class Model(nn.Module):
         y = self.activation(self.fin(y))
         for i, l in enumerate(self.linears):
             y = self.activation(l(y))
-        beta = self.fout(y)
+        beta_unsort = self.fout(y)
+        beta, indices = torch.sort(beta_unsort)
         return beta
 
 # x: lambda (8xn)
