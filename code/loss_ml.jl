@@ -11,8 +11,7 @@ import importlib
 importlib.reload(mlp)
 """
 
-function classic_mlp(; N = 100, nepoch = 10000, gpu_id = -1, ngrid = 100, nhidden = 100, eta = 1e-4)
-    #N = 100
+function cpr_classic_mlp(; N = 100, nepoch = 10000, gpu_id = -1, ngrid = 100, nhidden = 100, eta = 1e-4)
     # https://github.com/szcf-weiya/MonotoneSplines.jl/blob/2b5310d6d8583f9c898fb9c9e5583eb842493f13/src/boot.jl#L105
     seed = 1
     n = 100
@@ -28,10 +27,10 @@ function classic_mlp(; N = 100, nepoch = 10000, gpu_id = -1, ngrid = 100, nhidde
     prop_nknots = 0.2
     arr_λs = rand(N) * (λmax - λmin) .+ λmin
 
+    B, L, J = MonotoneSplines.build_model(x, prop_nknots = prop_nknots)
 
     βs = [mono_ss(x, y, λ, prop_nknots = prop_nknots).β for λ in arr_λs]
 
-    # ngrid = 100
     grid_λs = range(λmin, λmax, length=ngrid)
 
     grid_βs = [mono_ss(x, y, λ, prop_nknots = prop_nknots).β for λ in grid_λs]
@@ -43,6 +42,10 @@ function classic_mlp(; N = 100, nepoch = 10000, gpu_id = -1, ngrid = 100, nhidde
     λs_grid_mat = vcat(MonotoneSplines.aug.(grid_λs)'...)'
 
     tloss, vloss = py"mlp.train_MLP"(Float32.(λs_mat'), Float32.(βs_mat'), Float32.(λs_grid_mat'), Float32.(βs_grid_mat'), gpu_id, nepoch = nepoch, nhidden = nhidden, eta = eta)
+    #writedlm("loss-N$N-nepoch$nepoch-ngrid$ngrid-nhidden$nhidden-eta$eta.txt", hcat(tloss, vloss))
 
-    writedlm("loss-N$N-nepoch$nepoch-ngrid$ngrid-nhidden$nhidden-eta$eta.txt", hcat(tloss, vloss))
+    __init_pytorch__()
+    G, Loss = MonotoneSplines.py_train_G_lambda(y, B, L, nepoch = 0, nepoch0 = nepoch, K = N, lam_lo = λmin, lam_up = λmax, gpu_id = gpu_id,
+                nhidden = nhidden, λs_opt_train = λs, λs_opt_val = grid_λs, βs_opt_train = βs_mat', βs_opt_val = βs_grid_mat', niter_per_epoch = 1)
+    writedlm("loss-N$N-nepoch$nepoch-ngrid$ngrid-nhidden$nhidden-eta$eta.txt", hcat(tloss, vloss, Loss))
 end
