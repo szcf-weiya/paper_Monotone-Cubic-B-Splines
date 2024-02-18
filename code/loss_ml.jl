@@ -11,7 +11,7 @@ import importlib
 importlib.reload(mlp)
 """
 
-function cpr_classic_mlp(; N = 100, nepoch = 10000, gpu_id = -1, ngrid = 100, nhidden = 100, eta = 1e-4, λmin = 1e-6, λmax = 0.0)
+function cpr_classic_mlp(; N = 100, nepoch = 10000, gpu_id = -1, ngrid = 100, nhidden = 100, eta = 1e-4, λmin = 1e-6, λmax = 1.0)
     # https://github.com/szcf-weiya/MonotoneSplines.jl/blob/2b5310d6d8583f9c898fb9c9e5583eb842493f13/src/boot.jl#L105
     seed = 1
     n = 100
@@ -36,7 +36,7 @@ function cpr_classic_mlp(; N = 100, nepoch = 10000, gpu_id = -1, ngrid = 100, nh
     #writedlm("loss-N$N-nepoch$nepoch-ngrid$ngrid-nhidden$nhidden-eta$eta.txt", hcat(tloss, vloss))
 
     __init_pytorch__()
-    G, Loss, Loss1 = MonotoneSplines.py_train_G_lambda(y, B, L, nepoch = 0, nepoch0 = 1, K = N, λl = λmin, λu = λmax, gpu_id = gpu_id,
+    G, Loss, Loss1 = MonotoneSplines.py_train_G_lambda(y, B, L, nepoch = 0, nepoch0 = 1, K = N, λl = λmin, λu = λmax, gpu_id = gpu_id, η0 = eta,
                 nhidden = nhidden, λs_opt_train = λs, λs_opt_val = grid_λs, βs_opt_train = βs_mat', βs_opt_val = βs_grid_mat', niter_per_epoch = nepoch)
-    writedlm("loss-N$N-nepoch$nepoch-ngrid$ngrid-nhidden$nhidden-eta$eta.txt", hcat(tloss, vloss, Loss1))
+    writedlm("loss-N$N-nepoch$nepoch-ngrid$ngrid-nhidden$nhidden-eta$eta-lammin$λmin-lammax$λmax.txt", hcat(tloss, vloss, Loss1))
 end
