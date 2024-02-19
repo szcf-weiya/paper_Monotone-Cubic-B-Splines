@@ -1,3 +1,4 @@
 __pycache__
 Manifest.toml
 code/*.txt
+model_G.pt

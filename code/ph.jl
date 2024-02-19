@@ -2,6 +2,8 @@ using MonotoneSplines
 using DelimitedFiles
 using Plots
 using RCall
+using Random
+using Serialization
 
 function compare_cv_error(; nfold = 5)
     # slse did not offer a prediction method
@@ -50,4 +52,11 @@ function compare_cv_error(; nfold = 5)
         end
     end
     return err
+end
+
+function run_experiments()
+    Random.seed!(1234)
+    res10 = compare_cv_error(nfold = 10)
+    serialize("../output/real/res10.sil", res10)
+    res256 = compare_cv_error(nfold = 256)
 end
