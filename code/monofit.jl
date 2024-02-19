@@ -71,7 +71,10 @@ end
 function _MONMLP(x::AbstractVector{T}, y::AbstractVector{T}, x0::AbstractVector{T}; hidden1 = 10, hidden2 = 2) where T <: AbstractFloat
     res = R"monmlp::monmlp.fit(x=as.matrix($x), y=as.matrix($y), hidden1=$hidden1, monotone = 1, hidden2 = $hidden2, silent = TRUE)"
     fitted = rcopy(R"attr($res, 'y.pred')")[:]
-    pred = rcopy(R"monmlp::monmlp.predict(x = as.matrix($x0), weights = $res)")[:]
+    pred = rcopy(R"monmlp::monmlp.predict(x = as.matrix($x0), weights = $res)")
+    if isa(pred, Matrix)
+        pred = pred[:]
+    end
     return fitted, pred
 end
 

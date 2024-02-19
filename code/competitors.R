@@ -18,7 +18,7 @@ mono.poly = function(x, y, newx = NULL) {
     if (is.null(newx))
         ynew.hat = yhat
     else
-        ynew.hat = as.numeric(predict(m, newx))
+        ynew.hat = as.numeric(predict(m, data.frame(x = newx) ))
     list(fitted = yhat, pred = ynew.hat)    
 }
 
