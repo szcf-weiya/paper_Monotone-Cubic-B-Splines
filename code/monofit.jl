@@ -356,8 +356,8 @@ function write2tables(; include_slse = false, one_se_rule = true)
     # other curves
     curve_names = ["poly3", "logit", "growth", "step"]
     for (k, curve) in enumerate([cubic, logit, growth, steps])
-        for i = 1:3
-            for j = 1:2
+        for i = 1:3 # noise level
+            for j = 1:2 # mean and sd
                 curve[i][j][1, :] ./= 100 # scale L1 by n
                 curve[i][j][2, :] ./= 10 # scale L2 by sqrt(n)
             end

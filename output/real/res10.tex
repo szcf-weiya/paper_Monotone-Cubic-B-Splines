@@ -1,0 +1,19 @@
+\begin{tabular}{cccc}
+\toprule
+Method&$L_1$&$L_2$&$L_\infty$\tabularnewline
+\midrule
+Cubic Spline (CS)& 2.67e+00 (1.4e+00)\textsuperscript{12}& 1.52e+00 (1.0e+00)\textsuperscript{13}& 1.35e+00 (1.0e+00)\textsuperscript{13}\tabularnewline
+Monotone CS (MCS)& 1.81e+00 (6.4e-01)\textsuperscript{6}& 6.14e-01 (2.0e-01)\textsuperscript{4}& 3.67e-01 (1.2e-01)\textsuperscript{4}\tabularnewline
+Smoothing Spline (SS)& \textbf{1.30e+00} (9.9e-01)\textsuperscript{1}& 9.93e-01 (8.7e-01)\textsuperscript{12}& 9.55e-01 (8.7e-01)\textsuperscript{12}\tabularnewline
+Montone SS (MSS)& 1.54e+00 (5.7e-01)\textsuperscript{2}& \textbf{5.27e-01} (1.8e-01)\textsuperscript{1}& \textbf{3.34e-01} (1.1e-01)\textsuperscript{1}\tabularnewline
+Quadratic Spline (QS)& 2.17e+00 (6.8e-01)\textsuperscript{11}& 6.36e-01 (2.0e-01)\textsuperscript{8}& 3.69e-01 (1.2e-01)\textsuperscript{6}\tabularnewline
+\textcite{heMonotoneBsplineSmoothing1998}: MQS& 1.71e+00 (5.5e-01)\textsuperscript{5}& 6.67e-01 (2.1e-01)\textsuperscript{9}& 4.54e-01 (1.5e-01)\textsuperscript{11}\tabularnewline
+LOESS& 1.96e+00 (6.9e-01)\textsuperscript{7}& 6.25e-01 (2.1e-01)\textsuperscript{6}& 3.73e-01 (1.3e-01)\textsuperscript{8}\tabularnewline
+Isotonic& 1.57e+00 (5.7e-01)\textsuperscript{3}& 5.51e-01 (1.8e-01)\textsuperscript{2}& 3.36e-01 (1.1e-01)\textsuperscript{2}\tabularnewline
+\textcite{mammenEstimatingSmoothMonotone1991}: SI (LOESS+Isotonic)& 1.98e+00 (6.7e-01)\textsuperscript{8}& 6.19e-01 (2.1e-01)\textsuperscript{5}& 3.69e-01 (1.3e-01)\textsuperscript{5}\tabularnewline
+\textcite{mammenEstimatingSmoothMonotone1991}: IS (Isotonic+LOESS)& 1.98e+00 (6.9e-01)\textsuperscript{9}& 6.25e-01 (2.1e-01)\textsuperscript{7}& 3.69e-01 (1.3e-01)\textsuperscript{7}\tabularnewline
+\textcite{murrayFastFlexibleMethods2016a}: MonoPoly& 2.95e+00 (5.9e-01)\textsuperscript{13}& 7.81e-01 (1.8e-01)\textsuperscript{11}& 4.36e-01 (1.3e-01)\textsuperscript{10}\tabularnewline
+\textcite{cannonMonmlpMultilayerPerceptron2017}: MONMLP& 1.63e+00 (5.4e-01)\textsuperscript{4}& 5.59e-01 (1.7e-01)\textsuperscript{3}& 3.47e-01 (1.0e-01)\textsuperscript{3}\tabularnewline
+\textcite{navarro-garciaConstrainedSmoothingOutofrange2023}: cpsplines& 2.17e+00 (8.9e-01)\textsuperscript{10}& 7.07e-01 (2.5e-01)\textsuperscript{10}& 4.09e-01 (1.4e-01)\textsuperscript{9}\tabularnewline
+\bottomrule
+\end{tabular}
