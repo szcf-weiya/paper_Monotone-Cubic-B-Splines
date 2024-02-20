@@ -102,3 +102,40 @@ function write2table(resfile = "../output/real/res10.sil")
                 file = output_file,
                 isbf = [isbf], rank_sup = [rks])
 end
+
+function demo_fit()
+    data = readdlm("../data/ph.dat")
+    x = data[:, 1]
+    y = data[:, 2]
+
+    λs = exp.(range(-10, -1, length = 20))
+    errs, B, L, J = MonotoneSplines.cv_mono_ss(x, -y, λs) # by default for increasing, so add -y
+    λopt = λs[argmin(errs)]
+    βhat, yhat = MonotoneSplines.mono_ss(B, y, L, J, λopt);
+
+    x0 = range(minimum(x), maximum(x), length=500)
+
+    J = 50
+    fit_mcs = mono_cs(x, y, J, increasing = false)
+    fit_cs = R"bspline($x, $y, newx = $x0, degree = 3, J = $J)"
+    λs = exp.(-10:0.2:1)
+    # errs, B, L, J = cv_mono_ss(x, y, λs, increasing = false)
+    # λopt = λs[argmin(errs)]
+    # fit_mss = mono_ss(x, y, λopt, increasing = false)
+    yhat_ss, yhatnew_ss, _, λ = MonotoneSplines.smooth_spline(x, y, x0)
+    fit_mss = mono_ss(x, y, λ, increasing  = false)
+
+    ## Isotonic regression
+    yhat_iso, yhatnew_iso = ISO(x, -y, x0)
+
+    scatter(x, y, markersize = 2, label = "", legend = :topleft)
+    #scatter(x + randn(length(y)) * 0.05, y + randn(length(y)) * 0.05, markersize = 2)
+#    scatter!(x, fit_mcs4.fitted)
+#    scatter!(x, fit_mcs10.fitted)
+    plot!(x0, -yhatnew_iso, label = "Isotonic", ls = :dashdot)
+    plot!(x0, rcopy(R"$fit_cs$pred"), ls = :dashdotdot, label = "Cubic Spline (J = $J)")
+    plot!(x0, predict(fit_mcs, x0), ls = :dash, label = "Monotone Cubic Spline (J = $J)")
+    plot!(x0, yhatnew_ss, ls = :dot, label = "Smoothing Spline (λ = $(round(λ, sigdigits = 3)))")
+    plot!(x0, predict(fit_mss, x0), ls = :solid, label = "Monotone Smoothing Spline (λ = $(round(λ, sigdigits = 3)))")
+    savefig("../output/real/fit.pdf")
+end
