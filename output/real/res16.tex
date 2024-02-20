@@ -1,0 +1,19 @@
+\begin{tabular}{cccc}
+\toprule
+Method&$L_1$&$L_2$&$L_\infty$\tabularnewline
+\midrule
+Cubic Spline (CS)& \textbf{1.08e+00} (2.1e-01)\textsuperscript{5}& \textbf{5.87e-01} (1.1e-01)\textsuperscript{3}& \textbf{4.76e-01} (8.3e-02)\textsuperscript{3}\tabularnewline
+Monotone CS (MCS)& \textbf{1.08e+00} (1.9e-01)\textsuperscript{4}& \textbf{5.94e-01} (1.0e-01)\textsuperscript{5}& \textbf{4.89e-01} (8.2e-02)\textsuperscript{4}\tabularnewline
+Smoothing Spline (SS)& \textbf{6.80e-01} (5.8e-01)\textsuperscript{1}& \textbf{6.22e-01} (5.8e-01)\textsuperscript{8}& 6.09e-01 (5.8e-01)\textsuperscript{13}\tabularnewline
+Montone SS (MSS)& \textbf{1.11e+00} (2.1e-01)\textsuperscript{6}& \textbf{5.57e-01} (1.0e-01)\textsuperscript{1}& \textbf{4.43e-01} (8.6e-02)\textsuperscript{1}\tabularnewline
+Quadratic Spline (QS)& 1.33e+00 (1.8e-01)\textsuperscript{12}& \textbf{6.11e-01} (9.9e-02)\textsuperscript{7}& \textbf{4.99e-01} (9.1e-02)\textsuperscript{6}\tabularnewline
+\textcite{heMonotoneBsplineSmoothing1998}: MQS& \textbf{1.11e+00} (2.1e-01)\textsuperscript{7}& 6.88e-01 (1.4e-01)\textsuperscript{12}& 6.03e-01 (1.2e-01)\textsuperscript{12}\tabularnewline
+LOESS& \textbf{1.23e+00} (2.0e-01)\textsuperscript{10}& \textbf{6.46e-01} (1.1e-01)\textsuperscript{11}& 5.39e-01 (1.0e-01)\textsuperscript{10}\tabularnewline
+Isotonic& \textbf{9.71e-01} (1.8e-01)\textsuperscript{2}& \textbf{5.57e-01} (1.1e-01)\textsuperscript{2}& \textbf{4.72e-01} (9.9e-02)\textsuperscript{2}\tabularnewline
+\textcite{mammenEstimatingSmoothMonotone1991}: SI (LOESS+Isotonic)& \textbf{1.22e+00} (1.9e-01)\textsuperscript{9}& \textbf{6.40e-01} (1.1e-01)\textsuperscript{9}& 5.40e-01 (1.0e-01)\textsuperscript{11}\tabularnewline
+\textcite{mammenEstimatingSmoothMonotone1991}: IS (Isotonic+LOESS)& \textbf{1.24e+00} (2.0e-01)\textsuperscript{11}& \textbf{6.44e-01} (1.1e-01)\textsuperscript{10}& 5.35e-01 (1.0e-01)\textsuperscript{9}\tabularnewline
+\textcite{murrayFastFlexibleMethods2016a}: MonoPoly& 1.82e+00 (1.9e-01)\textsuperscript{13}& 6.88e-01 (1.0e-01)\textsuperscript{13}& \textbf{5.17e-01} (9.8e-02)\textsuperscript{8}\tabularnewline
+\textcite{cannonMonmlpMultilayerPerceptron2017}: MONMLP& \textbf{1.04e+00} (1.7e-01)\textsuperscript{3}& \textbf{5.88e-01} (9.8e-02)\textsuperscript{4}& \textbf{4.97e-01} (8.7e-02)\textsuperscript{5}\tabularnewline
+\textcite{navarro-garciaConstrainedSmoothingOutofrange2023}: cpsplines& \textbf{1.17e+00} (2.2e-01)\textsuperscript{8}& \textbf{6.10e-01} (1.1e-01)\textsuperscript{6}& \textbf{5.02e-01} (9.3e-02)\textsuperscript{7}\tabularnewline
+\bottomrule
+\end{tabular}

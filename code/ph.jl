@@ -5,7 +5,8 @@ using RCall
 using Random
 using Serialization
 
-function compare_cv_error(; nfold = 5)
+# res16 = compare_cv_error(nfold = 16, seed = 1)
+function compare_cv_error(; nfold = 5, seed = 1)
     # slse did not offer a prediction method
     methods = [MQB,     LOESS, ISO, mSI, mIS, MONMLP,           MCS,            MSS, cpspline, monpol]#, slse]
     name_methods = ["MQS", "QS", "LOESS", "Isotonic", "SI", 
@@ -22,7 +23,7 @@ function compare_cv_error(; nfold = 5)
     err = zeros(nfold, 3, nmethod)
     # calculate the cross-validation error
     n = length(x)
-    folds = MonotoneSplines.div_into_folds(n, K = nfold, seed = -1)        
+    folds = MonotoneSplines.div_into_folds(n, K = nfold, seed = seed)        
     for k = 1:nfold
         test_idx = folds[k]
         train_idx = setdiff(1:n, test_idx)
@@ -89,8 +90,8 @@ function write2table(resfile = "../output/real/res10.sil")
     rks = zeros(Int, n, m)
     for j = 1:3
         idx = argmin(μerr[:, j])
-#        cutoff = μerr[idx, j] + σerr[idx, j]
-#        isbf[μerr[:, j] .< cutoff, j] .= 1
+        cutoff = μerr[idx, j] + σerr[idx, j]
+        isbf[μerr[:, j] .< cutoff, j] .= 1
         isbf[idx, j] = 1
         rks[:, j] .= sortperm(sortperm(μerr[:, j]))
     end
