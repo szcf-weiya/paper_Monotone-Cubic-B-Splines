@@ -46,13 +46,13 @@ function demo_plot_loss()
     res100 = readdlm("../output/sim/trace-loss/loss-N100-nepoch20000-ngrid100-nhidden1000-eta0.0001-lammin1.0e-6-lammax0.1.txt")
     res1000 = readdlm("../output/sim/trace-loss/loss-N1000-nepoch20000-ngrid100-nhidden1000-eta0.0001-lammin1.0e-6-lammax0.1.txt")
     colors = [:orange, :blue, :black]
-    plot(log10.(res100[:, 1]), label = "Classic MLP (N=100)", xlab = "iterations", ylab = "Log Training L2 Loss", color = colors[1], legend = :topright)
-    plot!(log10.(res1000[:, 1]), label = "Classic MLP (N=1000)", color = colors[2])
+    plot(log10.(res100[:, 1]), label = "Classic MLP (N = 100)", xlab = "Iterations", ylab = "Log Training L2 Loss", color = colors[1], legend = :topright, labelfontsize = 14, legendfontsize = 14, tickfontsize = 11)
+    plot!(log10.(res1000[:, 1]), label = "Classic MLP (N = 1000)", color = colors[2])
     plot!(log10.(res100[:, 3]), label = "MLP Generator", color = colors[3])
     savefig("../output/sim/trace-loss/train-loss.pdf")
 
-    plot(log10.(res100[:, 2]), label = "Classic MLP (N=100)", xlab = "iterations", ylab = "Log Validation L2 Loss", color = colors[1], legend = :topright)
-    plot!(log10.(res1000[:, 2]), label = "Classic MLP (N=1000)", color = colors[2])
+    plot(log10.(res100[:, 2]), label = "Classic MLP (N = 100)", xlab = "Iterations", ylab = "Log Validation L2 Loss", color = colors[1], legend = :topright, labelfontsize = 14, legendfontsize = 14, tickfontsize = 11)
+    plot!(log10.(res1000[:, 2]), label = "Classic MLP (N = 1000)", color = colors[2])
     plot!(log10.(res100[:, 4]), label = "MLP Generator", color = colors[3])
     savefig("../output/sim/trace-loss/val-loss.pdf")
 end

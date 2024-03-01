@@ -8,11 +8,17 @@ using Plots
 using Random
 using SpecialFunctions: erf
 using RCall
-R"source('competitors.R')"
+curr_folder = @__DIR__
+rfile = "$curr_folder/competitors.R"
+R"source($rfile)"
 using PyCall # for cpsplines (https://github.com/ManuelNavarroGarcia/cpsplines)
-_py_sys = pyimport("sys")
-pushfirst!(_py_sys."path", @__DIR__)
-_py_cps = pyimport("cpspline")
+try
+    _py_sys = pyimport("sys")
+    pushfirst!(_py_sys."path", @__DIR__)
+    _py_cps = pyimport("cpspline")        
+catch
+    @warn "failed to import cpspline python env"
+end
 
 fstep(x::Float64; xs::Vector{Float64}) = sum(x .> xs)
 
@@ -271,7 +277,7 @@ function experiments(nrep = 100)
     end
 end
 
-function write2tables(; include_slse = false, one_se_rule = true)
+function write2tables(; include_slse = true, one_se_rule = true)
     # timestamp = "2022-07-04T11_07_25+08_00"
     # nrep = 100
     #timestamp = "2022-07-04T12_19_32+08_00"
@@ -289,15 +295,16 @@ function write2tables(; include_slse = false, one_se_rule = true)
     
     if include_slse
         # sel_idx = [12, 10, 15, 14, 2, 1, 3, 4, 5, 6, 17, 9, 16, 18]
-        sel_idx = [13, 11, 15, 14, 2, 1, 3, 4, 5, 6, 17, 9, 16, 19] # 18->19, discard the SI from experiments (due to unscaled)
+        #sel_idx = [13, 11, 15, 14, 2, 1, 3, 4, 5, 6, 17, 9, 16, 19] # 18->19, discard the SI from experiments (due to unscaled)
+        sel_idx = [11, 14, 13, 15, 2, 1, 3, 4, 5, 6, 17, 9, 16, 19] # 18->19, discard the SI from experiments (due to unscaled)
         res_slse = deserialize(joinpath(resfolder, "slse_2023-09-26T21_27_06-04_00_nrep100.sil"))
     else
         sel_idx = [13, 11, 15, 14, 2, 1, 3, 4, 5, 6, 17, 9, 16, 18]
     end
     all_method_lbl_full = ["\\textcite{heMonotoneBsplineSmoothing1998}: MQS", "Quadratic Spline (QS)", "LOESS", "Isotonic", "\\textcite{mammenEstimatingSmoothMonotone1991}: SI (LOESS+Isotonic)", 
                     "\\textcite{mammenEstimatingSmoothMonotone1991}: IS (Isotonic+LOESS)", "MONMLP (2x2)", "MONMLP (4x2)", "\\textcite{cannonMonmlpMultilayerPerceptron2017}: MONMLP", "Monotone CS (MCS)", 
-                    "Monotone CS (MCS)", "Cubic Spline (CS)", "Cubic Spline (CS)", "Montone SS (MSS)", "Smoothing Spline (SS)", 
-                    "\\textcite{navarro-garciaConstrainedSmoothingOutofrange2023}: cpsplines", "\\textcite{murrayFastFlexibleMethods2016a}: MonoPoly",
+                    "Monotone CS (MCS)", "Cubic Spline (CS)", "Cubic Spline (CS)", "Monotone SS (MSS)", "Smoothing Spline (SS)", 
+                    "\\textcite{navarro-garciaConstrainedSmoothingOutofrange2023}: cpsplines", "\\textcite{murrayFastFlexibleMethods2016}: MonoPoly",
                     "\\textcite{groeneboomConfidenceIntervalsMonotone2023}: SLSE",
                     "\\textcite{groeneboomConfidenceIntervalsMonotone2023}: SLSE"]
     cubic = Array{Any, 1}(undef, 3)

@@ -4,6 +4,8 @@ using Plots
 using RCall
 using Random
 using Serialization
+using StatsBase
+using LaTeXTables
 
 # res16 = compare_cv_error(nfold = 16, seed = 1)
 function compare_cv_error(; nfold = 5, seed = 1)
@@ -74,17 +76,17 @@ function write2table(resfile = "../output/real/res10.sil")
     "IS", "MONMLP (2x2)", "MONMLP (4x2)", "MONMLP (32x2)", "MCS1", 
     "MCS2", "CS1", "CS2", "MSS", "SS", 
     "cpsplines", "MonoPoly", "SLSE"]
-    sel_idx = [13, 11, 15, 14, 2, 1, 3, 4, 5, 6, 17, 9, 16]
+    sel_idx = [11, 14, 13, 15, 2, 1, 3, 4, 5, 6, 17, 9, 16]
     all_method_lbl_full = ["\\textcite{heMonotoneBsplineSmoothing1998}: MQS", "Quadratic Spline (QS)", "LOESS", "Isotonic", "\\textcite{mammenEstimatingSmoothMonotone1991}: SI (LOESS+Isotonic)", 
                     "\\textcite{mammenEstimatingSmoothMonotone1991}: IS (Isotonic+LOESS)", "MONMLP (2x2)", "MONMLP (4x2)", "\\textcite{cannonMonmlpMultilayerPerceptron2017}: MONMLP", "Monotone CS (MCS)", 
-                    "Monotone CS (MCS)", "Cubic Spline (CS)", "Cubic Spline (CS)", "Montone SS (MSS)", "Smoothing Spline (SS)", 
-                    "\\textcite{navarro-garciaConstrainedSmoothingOutofrange2023}: cpsplines", "\\textcite{murrayFastFlexibleMethods2016a}: MonoPoly",
+                    "Monotone CS (MCS)", "Cubic Spline (CS)", "Cubic Spline (CS)", "Monotone SS (MSS)", "Smoothing Spline (SS)", 
+                    "\\textcite{navarro-garciaConstrainedSmoothingOutofrange2023}: cpsplines", "\\textcite{murrayFastFlexibleMethods2016}: MonoPoly",
                     "\\textcite{groeneboomConfidenceIntervalsMonotone2023}: SLSE",
                     "\\textcite{groeneboomConfidenceIntervalsMonotone2023}: SLSE"]
 
     res = deserialize(resfile)
     μerr = mean(res, dims = 1)[1, :, sel_idx]'
-    σerr = std(res, dims = 1)[1, :, sel_idx]' / sqrt(10) # 10 fold
+    σerr = std(res, dims = 1)[1, :, sel_idx]' / size(res, 1)
     n, m = size(μerr)
     isbf = zeros(Bool, n, m)
     rks = zeros(Int, n, m)
@@ -100,7 +102,8 @@ function write2table(resfile = "../output/real/res10.sil")
     print2tex([Matrix(μerr)], [Matrix(σerr)], [""], [""], all_method_lbl_full[sel_idx], colname, 
                 colnames_of_rownames = ["Method"], 
                 file = output_file,
-                isbf = [isbf], rank_sup = [rks])
+                # isbf = [isbf], # due to too many in that case, so unbold might look better
+                rank_sup = [rks])
 end
 
 function demo_fit()
